@@ -1,9 +1,11 @@
 package sda.group3.bravenewwords;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         //1. choosing how many players (3-4) -
 
         // 2.questions - viena fukncija kas uzdod jautājumu jautājums tiek izvēlēts randomā
@@ -32,18 +34,36 @@ public class Main {
         keys[3] = where;
         keys[4] = didWhat;
         keys[5] = why;
+        //Map holding final results: story for each player
+        Map<Integer, String[]> resultOfGameFinalStory = new HashMap<>();
+
 
         Functionality functionality = new Functionality();
-        //Asking questions - getting answers
-        //FOR TEST: PLAYER 1 - 1,2,3,4,5,6 || PLAYER 2 - A,B,C,D,E,F
-        //          to check if the order of words used in story is correct
+        Connection connection = Database.getConnection();
+        if (connection == null) {
+            System.out.println("We ain't able to connect to the database");
+        } else {
+            System.out.println("IR");
+        Database.createTable(connection);
+
+
         System.out.println("Please write your answer to question:");
+
+        //Asking how many players
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter Player Number: ");
         int givenPlayers = scanner.nextInt();
-        int player = 1;
+        int player = 1; //always is 1 player
         String answer;
-        do {
+        String playerName;
+        //Asking questions - getting answers; answers stored in MAP in functionality
+            String[] playerStory;
+            do {
+            System.out.println("Enter player name: ");
+            playerName = scanner.next();
+
+
+
             System.out.println("Player " + player + " give your answers: ");
             answer = functionality.askQuestion(who);
             functionality.addAnswer(who, answer);
@@ -57,21 +77,25 @@ public class Main {
             functionality.addAnswer(didWhat, answer);
             answer = functionality.askQuestion(why);
             functionality.addAnswer(why, answer);
+//player = 1;
+            playerStory = functionality.creatingTheStory(keys);
+//            functionality.printStory(playerStory);
+            resultOfGameFinalStory.put(player, playerStory);
+//            player += 1;
+            //System.out.println("Map content after STORY: " + functionality.answers.toString());
+
+            Database.insertIntoTable(connection,playerName,playerStory);
+
+
             player += 1;
         } while (player < givenPlayers + 1);
         System.out.println("Map content before THE STORY: " + functionality.answers.toString());
 
-        Map<Integer, String[]> resultOfGameFinalStory = new HashMap<>();
 
-        String[] playerStory;
-        player = 1;
+
+//        player = 1;
 
         do {
-            playerStory = functionality.creatingTheStory(keys);
-//            functionality.printStory(playerStory);
-            resultOfGameFinalStory.put(player, playerStory);
-            player += 1;
-            System.out.println("Map content after STORY: " + functionality.answers.toString());
 
 
         } while (player < givenPlayers + 1);
@@ -86,4 +110,4 @@ public class Main {
 
 
     }
-}
+}}
