@@ -71,6 +71,8 @@ public class Main {
 //            functionality.printStory(playerStory);
             resultOfGameFinalStory.put(player, playerStory);
             player += 1;
+            System.out.println("Map content after STORY: " + functionality.answers.toString());
+
 
         } while (player < givenPlayers + 1);
         //Printing results for game

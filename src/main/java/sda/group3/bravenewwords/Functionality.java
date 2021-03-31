@@ -84,9 +84,8 @@ public class Functionality {
             key = keys[i];
             String answerOneWord = getWordFromList(key);
             storyPlayer[indexOfAnswer(key)] = answerOneWord;
-            if (getAnswerList(key).contains(answerOneWord)) {
-                int indexForRemove = getAnswerList(key).indexOf(answerOneWord);
-                answers.remove(key, getAnswerList(key).remove(indexForRemove));     }}
+            int indexForRemove = getAnswerList(key).indexOf(answerOneWord);
+                answers.remove(key, getAnswerList(key).remove(indexForRemove));     }
         return storyPlayer;
     }
 
