@@ -5,7 +5,6 @@ import java.util.*;
 public class Functionality {
 
     Map<String, List<String>> answers = new HashMap<>();
-    //FINAL RESULT  - STORY:
 
     //asking question, receiving answer
     public String askQuestion(String question) {
@@ -75,7 +74,6 @@ public class Functionality {
     // void - because result of method changes variable theStory /defined in beginning
     //removes form Map the word that are used
 
-//    String[] theStory = new String[6];
 
     public String[] creatingTheStory(String[] keys) {
         String[] storyPlayer = new String[keys.length];
@@ -99,6 +97,7 @@ public class Functionality {
                 System.out.printf(story[i] + " ");
             }
         }
+
         System.out.println("\n");
     }
 
