@@ -35,7 +35,7 @@ public class Main {
         keys[4] = didWhat;
         keys[5] = why;
         //Map holding final results: story for each player
-        Map<Integer, String[]> resultOfGameFinalStory = new HashMap<>();
+        Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
 
 
         Functionality functionality = new Functionality();
@@ -44,70 +44,73 @@ public class Main {
             System.out.println("We ain't able to connect to the database");
         } else {
             System.out.println("IR");
-        Database.createTable(connection);
+            Database.createTable(connection);
 
 
-        System.out.println("Please write your answer to question:");
+            System.out.println("Please write your answer to question:");
 
-        //Asking how many players
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter Player Number: ");
-        int givenPlayers = scanner.nextInt();
-        int player = 1; //always is 1 player
-        String answer;
-        String playerName;
-        //Asking questions - getting answers; answers stored in MAP in functionality
+            //Asking how many players
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter Player Number: ");
+            int givenPlayers = scanner.nextInt();
+            int player = 1; //always is 1 player
+            String answer;
+            String playerName;
+            //Asking questions - getting answers; answers stored in MAP in functionality
             String[] playerStory;
             do {
-            System.out.println("Enter player name: ");
-            playerName = scanner.next();
+                System.out.println("Enter player name: ");
+                playerName = scanner.next();
+//                int indexForPlayerName = 0;
+
+                System.out.println("Player " + player + " give your answers: ");
+                for (int i = 0; i < keys.length; i++) {
+                    answer = functionality.askQuestion(keys[i]);
+                    functionality.addAnswer(keys[i], answer);
+                }
+
+//                answer = functionality.askQuestion(who);
+//                functionality.addAnswer(who, answer);
+//                answer = functionality.askQuestion(withWho);
+//                functionality.addAnswer(withWho, answer);
+//                answer = functionality.askQuestion(when);
+//                functionality.addAnswer(when, answer);
+//                answer = functionality.askQuestion(where);
+//                functionality.addAnswer(where, answer);
+//                answer = functionality.askQuestion(didWhat);
+//                functionality.addAnswer(didWhat, answer);
+//                answer = functionality.askQuestion(why);
+//                functionality.addAnswer(why, answer);
 
 
+                player += 1;
+            } while (player < givenPlayers + 1);
 
-            System.out.println("Player " + player + " give your answers: ");
-            answer = functionality.askQuestion(who);
-            functionality.addAnswer(who, answer);
-            answer = functionality.askQuestion(withWho);
-            functionality.addAnswer(withWho, answer);
-            answer = functionality.askQuestion(when);
-            functionality.addAnswer(when, answer);
-            answer = functionality.askQuestion(where);
-            functionality.addAnswer(where, answer);
-            answer = functionality.askQuestion(didWhat);
-            functionality.addAnswer(didWhat, answer);
-            answer = functionality.askQuestion(why);
-            functionality.addAnswer(why, answer);
-//player = 1;
-            playerStory = functionality.creatingTheStory(keys);
+            player = 1;
+            do {
+                //creating story
+                playerStory = functionality.creatingTheStory(keys);
 //            functionality.printStory(playerStory);
-            resultOfGameFinalStory.put(player, playerStory);
+                resultOfGameFinalStory.put(playerName, playerStory);
 //            player += 1;
-            //System.out.println("Map content after STORY: " + functionality.answers.toString());
-
-            Database.insertIntoTable(connection,playerName,playerStory);
-
-
-            player += 1;
-        } while (player < givenPlayers + 1);
-        System.out.println("Map content before THE STORY: " + functionality.answers.toString());
+                //System.out.println("Map content after STORY: " + functionality.answers.toString());
+                System.out.println(resultOfGameFinalStory.toString());
+                Database.insertIntoTable(connection, playerName, playerStory);
+                player++;
+            } while (player < givenPlayers + 1);
+//            System.out.println("Map content before THE STORY: " + functionality.answers.toString());
 
 
+            //Printing results for game
+            player = 1;
+            for (int i = 0; i < givenPlayers; i++) {
+                System.out.println("Story for Player: " + player);
+                String[] story = resultOfGameFinalStory.get(player);
+                functionality.printStory(story);
+                player++;
+            }
 
-//        player = 1;
 
-        do {
-
-
-        } while (player < givenPlayers + 1);
-        //Printing results for game
-        player = 1;
-        for (int i = 0; i <givenPlayers ; i++) {
-            System.out.println("Story for Player: "+player);
-            String [] story = resultOfGameFinalStory.get(player);
-            functionality.printStory(story);
-            player++;
         }
-
-
     }
-}}
+}
