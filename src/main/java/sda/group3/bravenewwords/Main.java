@@ -20,6 +20,9 @@ public class Main {
         // 7. rerun programm - option tho choose if want to play again
         // random comment
 
+
+        ///// random random comment
+
         //Definē nemaināmu variabli, lai nav visur jāpārraksta
         final String who = "Who? / What?";
         final String withWho = "With whom / what?";
