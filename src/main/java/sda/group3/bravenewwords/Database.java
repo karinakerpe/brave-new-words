@@ -1,7 +1,9 @@
 package sda.group3.bravenewwords;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.sql.*;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Database {
     public static Connection getConnection() throws SQLException {
@@ -22,7 +24,6 @@ public class Database {
                 "player_name VARCHAR(200)," +
                 "story TEXT)";
 
-        //Try with resources
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }
@@ -57,6 +58,23 @@ public class Database {
                 System.out.println(id + " | " + name + " | " + address + " | " + program);
             }
         }
+    }
+
+    public static boolean compareToWhitelist(Connection connection, String question, String answer) throws SQLException{
+        String sql = "SELECT * FROM whitelist WHERE forbidden_word='" + answer + "'";
+        boolean wordIsInTheWhitelist;
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            if (resultSet.next()){
+                wordIsInTheWhitelist = true;
+            }
+            else{
+                wordIsInTheWhitelist = false;
+            }
+//            } catch (Exception e) {
+//            e.printStackTrace();
+        }
+        return wordIsInTheWhitelist;
     }
 
 }

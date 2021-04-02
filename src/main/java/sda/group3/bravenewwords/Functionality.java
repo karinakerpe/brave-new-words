@@ -4,47 +4,46 @@ import java.util.*;
 
 public class Functionality {
 
+    // creating a map where save answers to specific questions
     Map<String, List<String>> answers = new HashMap<>();
 
-    //asking question, receiving answer
+    //asking a question and saving the answer
     public String askQuestion(String question) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(question);
-        String answer = scanner.nextLine();
-        return answer;
-
+        return scanner.nextLine();
     }
 
-    //adding received answer to Map
+
+    //adding the answer to the Map
     public void addAnswer(String question, String givenAnswer) {
         List<String> answer = answers.getOrDefault(question, new ArrayList<>());
         answer.add(givenAnswer);
         answers.put(question, answer);
     }
 
-    //getting one List from Map, according given key(question)
+    //getting a list of answers from the Map for specific question(key)
     public List<String> getAnswerList(String key) {
         return answers.get(key);
     }
 
-
-    //getting one word form List created in previous method, using Random
+    //getting one random word from the list created in the method getAnswerList();
     public String getWordFromList(String key) {
-
         if (getAnswerList(key).size() == 1) {
             return getAnswerList(key).get(0);
         } else {
-            Random rand = new Random();
-            List<String> givenList = getAnswerList(key);
-            int randomIndex = rand.nextInt(givenList.size());
-            return givenList.get(randomIndex);
+            Random random = new Random();
+            int randomIndex = random.nextInt(getAnswerList(key).size());
+            return getAnswerList(key).get(randomIndex);
         }
     }
 
-    //for sorting purposes for creating the final story,
-    // creating new variable index according to question order
+
+    // ensures that in the final story words are in the correct order
+    // creating variable "index" that stores the index of the question
     public int indexOfAnswer(String key) {
         int index = 0;
+
         switch (key) {
             case "Who? / What?":
                 index = 0;
@@ -70,10 +69,8 @@ public class Functionality {
     }
 
 
-    //creating story, using previously created methods,
-    // void - because result of method changes variable theStory /defined in beginning
-    //removes form Map the word that are used
-
+    //creating story using previous methods
+    //removes used words from the Map
 
     public String[] creatingTheStory(String[] keys) {
         String[] storyPlayer = new String[keys.length];
@@ -82,26 +79,22 @@ public class Functionality {
             key = keys[i];
             String answerOneWord = getWordFromList(key);
             storyPlayer[indexOfAnswer(key)] = answerOneWord;
-            int indexForRemove = getAnswerList(key).indexOf(answerOneWord);
-                answers.remove(key, getAnswerList(key).remove(indexForRemove));     }
+            getAnswerList(key).remove(answerOneWord);
+        }
         return storyPlayer;
     }
 
 
-    //for printing String Array
-    //getting the value - String[] theStory in Main,
-    // because in Main creating new String[] for each Players story
+    //printing story as string
+    //getting the value - String[] theStory in Main, because each player story is saved in String[]
     public void printStory (String[]story){
+        String storyInString = "";
         for (int i = 0; i < story.length; i++) {
             if (story[i]!=null){
-                System.out.printf(story[i] + " ");
+                storyInString += (story[i] + " ");
             }
         }
-
-        System.out.println("\n");
+        String formattedStory = storyInString.substring(0,1).toUpperCase() + storyInString.substring(1).toLowerCase();
+        System.out.println(formattedStory + "\n");
     }
-
-
-
-
 }
