@@ -1,5 +1,6 @@
 package sda.group3.bravenewwords;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -8,8 +9,8 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         //1. choosing how many players (3-4) -
 
-        // 2.questions - viena fukncija kas uzdod jautājumu jautājums tiek izvēlēts randomā
-        // 3. answers - collecting and saving to concrete question (maps - key- questions, value <list>- answers)
+        // 2.questions - viena fukncija kas uzdod jautājumu
+        // 3. answers - collecting and saving answers to specific question (maps - key- questions, value <list>- answers)
         //3.5. collecting answers and checking with whitelist, and then saving if they are okey
 
         //4.generating "story" ->
@@ -20,7 +21,9 @@ public class Main {
 
         // 7. rerun programm - option tho choose if want to play again
 
-        //Definē nemaināmu variabli, lai nav visur jāpārraksta
+        Functionality functionality = new Functionality();
+
+        //stores game questions in String array
         final String who = "Who? / What?";
         final String withWho = "With whom / what?";
         final String when = "When?";
@@ -34,83 +37,96 @@ public class Main {
         keys[3] = where;
         keys[4] = didWhat;
         keys[5] = why;
-        //MAP HOLDING FINAL RESULTS: story for each player, key = playersName[indexForPlayerName]
+
+        // stores which player's data we are working with
+        int player = 1;
+
+        // stores player's answer to specific question
+        String answer;
+
+        // stores player's final story
+        String[] playerStory;
+
+        //stores all final stories of all players / key = playerName, value = playerStory
         Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
 
-        Functionality functionality = new Functionality();
 
-
-        //TO DATABASE
+        //Connect to database for storing answers and accessing whitelist
         Connection connection = Database.getConnection();
         if (connection == null) {
             System.out.println("We ain't able to connect to the database");
         } else {
-            System.out.println("IR");
             Database.createTable(connection);
 
+            // Welcome text
+            System.out.println("Please write your answers to following question:");
 
-            System.out.println("Please write your answer to question:");
-
-            //Asking how many players
+            //Asking how many players will play
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter Player Number: ");
+            System.out.println("Enter Number of Players: ");
             int givenPlayers = scanner.nextInt();
-            int player = 1; //always there is 1 player
-            String answer;
 
-            ///NEW VARIABLES - for getting each players name
 
+            /// stores players' names
             String[] playerNames = new String[givenPlayers];
             int indexForPlayerName = 0;
 
 
-            //GETTING ANSWERS
-            String[] playerStory;
+
+            //asking questions and saving answers
+
             do {
-                System.out.println("Enter player name: ");
-
-                //NEW asking players name; adding it to the String Array outside this loop
-                //it's made so that Player 1 = entered name, and it can be shown at the end
-
+                //asking player's name and adding it to the String Array
+                System.out.println("Enter player's name: ");
                 String enteredName = scanner.next();
                 playerNames[indexForPlayerName] = enteredName;
 
-
-               //Asking questions - getting answers; answers stored in MAP in Functionality
-                System.out.println("Player " + player + " give your answers: ");
+               //asking questions, storing answers in the Map (Functionality Class)
+                System.out.println("Player " + enteredName + " give your answers: ");
                 for (int i = 0; i < keys.length; i++) {
                     answer = functionality.askQuestion(keys[i]);
+
+                    // if word is in the whitelist, player has to insert new answer
+                    while (Database.compareToWhitelist(connection, keys[i], answer)){
+                        System.out.println("This is a BAD, BAD word! Please insert something else");
+                        answer = functionality.askQuestion(keys[i]);
+                    }
+                    //if word is not in the whitelist, answer is saved in the map
                     functionality.addAnswer(keys[i], answer);
                 }
-                player += 1;
+                player++;
                 indexForPlayerName++;
             } while (player < givenPlayers + 1);
 
             //For TESTS
             //System.out.println("Map content BEFORE STORY: " + functionality.answers.toString());
 
-            //Resetting values for new loop
+            //Resetting values to create stories for every player
             player = 1;
             indexForPlayerName = 0;
 
-            //CREATING RANDOM :) story
+
             do {
+                //creating random story for each player
                 playerStory = functionality.creatingTheStory(keys);
+
+                // adding story to the Map of results
                 resultOfGameFinalStory.putIfAbsent(playerNames[indexForPlayerName], playerStory);
                 //FOR TESTS:
                 // System.out.println("Map content after STORY: " + functionality.answers.toString());
                 //System.out.println("Second-FINAL  MAP:  "+resultOfGameFinalStory.toString());
+
+                // saving story in the database
                 Database.insertIntoTable(connection, playerNames[indexForPlayerName], playerStory);
                 player++;
                 indexForPlayerName++;
             } while (player < givenPlayers + 1);
 
-            //Resetting values for next loop;
+            //Resetting values to print the story for every player
             player = 1;
             indexForPlayerName=0;
 
 
-            //PRINTING results for game
             for (int i = 0; i < givenPlayers; i++) {
                 System.out.println("Story for Player " + player+":  "+playerNames[indexForPlayerName]);
                 String[] story = resultOfGameFinalStory.get(playerNames[indexForPlayerName]);
