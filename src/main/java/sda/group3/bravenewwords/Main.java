@@ -85,10 +85,13 @@ public class Main {
                 System.out.println("Player " + enteredName + " give your answers: ");
                 for (int i = 0; i < keys.length; i++) {
                     answer = functionality.askQuestion(keys[i]);
+
+                    // if word is in the whitelist, player has to insert new answer
                     while (Database.compareToWhitelist(connection, keys[i], answer)){
                         System.out.println("This is a BAD, BAD word! Please insert something else");
                         answer = functionality.askQuestion(keys[i]);
                     }
+                    //if word is not in the whitelist, answer is saved in the map
                     functionality.addAnswer(keys[i], answer);
                 }
                 player++;

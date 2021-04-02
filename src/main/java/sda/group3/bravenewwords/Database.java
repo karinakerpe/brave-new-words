@@ -60,6 +60,7 @@ public class Database {
         }
     }
 
+    // compares whether players answer is in the whitelist
     public static boolean compareToWhitelist(Connection connection, String question, String answer) throws SQLException{
         String sql = "SELECT * FROM whitelist WHERE forbidden_word='" + answer + "'";
         boolean wordIsInTheWhitelist;
