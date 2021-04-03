@@ -1,9 +1,9 @@
 package sda.group3.bravenewwords;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -53,17 +53,21 @@ public class Main {
 
         //Connect to database for storing answers and accessing whitelist
         Connection connection = Database.getConnection();
+
         if (connection == null) {
-            System.out.println("We ain't able to connect to the database");
+            functionality.setColorErrorText();
+            System.out.println("We ain't able to connect to the database"+functionality.ANSI_RESET);
         } else {
             Database.createTable(connection);
 
             // Welcome text
-            System.out.println("Please write your answers to following question:");
+            functionality.setColorMainText();
+            System.out.println("Please write your answers to following question:" + functionality.ANSI_RESET);
 
             //Asking how many players will play
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter Number of Players: ");
+            functionality.setColor();
+            System.out.println("Enter Number of Players: " + functionality.ANSI_RESET);
             int givenPlayers = scanner.nextInt();
 
 
@@ -72,23 +76,28 @@ public class Main {
             int indexForPlayerName = 0;
 
 
-
             //asking questions and saving answers
 
             do {
                 //asking player's name and adding it to the String Array
-                System.out.println("Enter player's name: ");
-                String enteredName = scanner.next();
+                System.out.println(functionality.WHITE_BACKGROUND_BRIGHT + functionality.BLACK_BOLD_BRIGHT+"Enter player's name: " + functionality.ANSI_RESET);
+
+                //new Scanner to fix problem = after nextINT() the nextLine() is not working,
+                // BUT next() takes only first string not all what is entered
+                Scanner scanner1 = new Scanner(System.in);
+                String enteredName = scanner1.nextLine();
                 playerNames[indexForPlayerName] = enteredName;
 
-               //asking questions, storing answers in the Map (Functionality Class)
-                System.out.println("Player " + enteredName + " give your answers: ");
+                //asking questions, storing answers in the Map (Functionality Class)
+                functionality.setColorMainText();
+                System.out.println("Player " + enteredName + " give your answers: " + functionality.ANSI_RESET);
                 for (int i = 0; i < keys.length; i++) {
                     answer = functionality.askQuestion(keys[i]);
 
                     // if word is in the whitelist, player has to insert new answer
-                    while (Database.compareToWhitelist(connection, keys[i], answer)){
-                        System.out.println("This is a BAD, BAD word! Please insert something else");
+                    while (Database.compareToWhitelist(connection, keys[i], answer)) {
+                        functionality.setColorErrorText();
+                        System.out.println("This is a BAD, BAD word! Please insert something else"+functionality.ANSI_RESET);
                         answer = functionality.askQuestion(keys[i]);
                     }
                     //if word is not in the whitelist, answer is saved in the map
@@ -96,6 +105,20 @@ public class Main {
                 }
                 player++;
                 indexForPlayerName++;
+// makes pause for 1 second
+                try {
+
+                    System.out.print(functionality.BLACK_BACKGROUND_BRIGHT+functionality.ANSI_BLACK+"  >>>> loading >>  "+functionality.ANSI_RESET);
+                    for (int i = 0; i < 4; i++) {
+
+                        TimeUnit.MICROSECONDS.sleep(999985);
+                        System.out.print(functionality.BLACK_BACKGROUND_BRIGHT+functionality.ANSI_BLACK+"  >>  "+functionality.ANSI_RESET);
+                    }
+                    System.out.println("\n");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             } while (player < givenPlayers + 1);
 
             //For TESTS
@@ -124,11 +147,13 @@ public class Main {
 
             //Resetting values to print the story for every player
             player = 1;
-            indexForPlayerName=0;
+            indexForPlayerName = 0;
 
 
             for (int i = 0; i < givenPlayers; i++) {
-                System.out.println("Story for Player " + player+":  "+playerNames[indexForPlayerName]);
+                functionality.setColorMainText();
+                System.out.println("Story for Player " + player + ":  " + playerNames[indexForPlayerName]
+                        +"\t\t"+functionality.ANSI_RESET+"\n");
                 String[] story = resultOfGameFinalStory.get(playerNames[indexForPlayerName]);
                 functionality.printStory(story);
                 player++;

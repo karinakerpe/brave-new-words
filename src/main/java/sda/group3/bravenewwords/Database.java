@@ -9,6 +9,7 @@ public class Database {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/she_goes_tech", "root", "password");
+
     }
 
     public static PreparedStatement createPreparedStatement() throws SQLException {
