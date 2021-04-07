@@ -144,16 +144,16 @@ public class Functionality {
             case "Who? / What?":
                 index = 0;
                 break;
-            case "With whom / what?":
+            case "With whom / with what?":
                 index = 1;
                 break;
-            case "When?":
+            case "Did what?":
                 index = 2;
                 break;
             case "Where?":
                 index = 3;
                 break;
-            case "Did what?":
+            case "When?":
                 index = 4;
                 break;
             case "Why?":
