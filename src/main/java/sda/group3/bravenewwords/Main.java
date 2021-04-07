@@ -39,17 +39,17 @@ String playAgain = "y";
         keys[4] = didWhat;
         keys[5] = why;
 
-        // stores which player's data we are working with
-        int player = 1;
-
-        // stores player's answer to specific question
-        String answer;
-
-        // stores player's final story
-        String[] playerStory;
-
-        //stores all final stories of all players / key = playerName, value = playerStory
-        Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
+//        // stores which player's data we are working with
+//        int player = 1;
+//
+//        // stores player's answer to specific question
+//        String answer;
+//
+//        // stores player's final story
+//        String[] playerStory;
+//
+//        //stores all final stories of all players / key = playerName, value = playerStory
+//        Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
 
 
         //Connect to database for storing answers and accessing whitelist
@@ -63,6 +63,18 @@ String playAgain = "y";
 do {
     // Welcome text
     functionality.setColorMainText();
+    // stores which player's data we are working with
+    int player = 1;
+
+    // stores player's answer to specific question
+    String answer;
+
+    // stores player's final story
+    String[] playerStory;
+
+    //stores all final stories of all players / key = playerName, value = playerStory
+    Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
+
     System.out.println("Please write your answers to following question:" + functionality.ANSI_RESET);
 
             //Asking how many players will play
