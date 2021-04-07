@@ -20,6 +20,7 @@ public class Main {
         // 6.database for "story", unformated story in database
 
         // 7. rerun programm - option tho choose if want to play again
+String playAgain = "y";
 
         Functionality functionality = new Functionality();
 
@@ -59,125 +60,131 @@ public class Main {
             System.out.println("We ain't able to connect to the database"+functionality.ANSI_RESET);
         } else {
             Database.createTable(connection);
+do {
+    // Welcome text
+    functionality.setColorMainText();
+    System.out.println("Please write your answers to following question:" + functionality.ANSI_RESET);
 
-            // Welcome text
-            functionality.setColorMainText();
-            System.out.println("Please write your answers to following question:" + functionality.ANSI_RESET);
+    //Asking how many players will play
+    Scanner scanner = new Scanner(System.in);
+    functionality.setColor();
+    System.out.println("Enter Number of Players: " + functionality.ANSI_RESET);
 
-            //Asking how many players will play
-            Scanner scanner = new Scanner(System.in);
-            functionality.setColor();
-            System.out.println("Enter Number of Players: " + functionality.ANSI_RESET);
+    boolean validInput = false;
+    int givenPlayers = 0;
+    while (!validInput) {
+        try {
+            givenPlayers = scanner.nextInt();
+            if (givenPlayers > 0 && givenPlayers <= 5) {
+                validInput = true;
+            } else {
+                System.out.println("Please enter a number of players ( from 1 to 5)");
 
-            boolean validInput = false;
-            int givenPlayers = 0;
-            while (!validInput) {
-                try {
-                    givenPlayers = scanner.nextInt();
-                    if (givenPlayers > 0 && givenPlayers <= 5){
-                        validInput = true;
-                    } else {
-                        System.out.println("Please enter a number of players ( from 1 to 5)");
-
-                    }
-
-                } catch (InputMismatchException e) {
-                    System.out.println("Please enter a number from 1 - 5! Please do not use letters.");
-                    scanner.next();
-                }
             }
 
+        } catch (InputMismatchException e) {
+            System.out.println("Please enter a number from 1 - 5! Please do not use letters.");
+            scanner.next();
+        }
+    }
 
-            /// stores players' names
-            String[] playerNames = new String[givenPlayers];
-            int indexForPlayerName = 0;
+
+    /// stores players' names
+    String[] playerNames = new String[givenPlayers];
+    int indexForPlayerName = 0;
 
 
-            //asking questions and saving answers
+    //asking questions and saving answers
 
-            do {
-                //asking player's name and adding it to the String Array
-                System.out.println(functionality.WHITE_BACKGROUND_BRIGHT + functionality.BLACK_BOLD_BRIGHT+"Enter player's name: " + functionality.ANSI_RESET);
+    do {
+        //asking player's name and adding it to the String Array
+        System.out.println(functionality.WHITE_BACKGROUND_BRIGHT + functionality.BLACK_BOLD_BRIGHT + "Enter player's name: " + functionality.ANSI_RESET);
 
-                //new Scanner to fix problem = after nextINT() the nextLine() is not working,
-                // BUT next() takes only first string not all what is entered
-                Scanner scanner1 = new Scanner(System.in);
-                String enteredName = scanner1.nextLine();
-                playerNames[indexForPlayerName] = enteredName;
+        //new Scanner to fix problem = after nextINT() the nextLine() is not working,
+        // BUT next() takes only first string not all what is entered
+        Scanner scanner1 = new Scanner(System.in);
+        String enteredName = scanner1.nextLine();
+        playerNames[indexForPlayerName] = enteredName;
 
-                //asking questions, storing answers in the Map (Functionality Class)
-                functionality.setColorMainText();
-                System.out.println("Player " + enteredName + " give your answers: " + functionality.ANSI_RESET);
-                for (int i = 0; i < keys.length; i++) {
-                    answer = functionality.askQuestion(keys[i]);
+        //asking questions, storing answers in the Map (Functionality Class)
+        functionality.setColorMainText();
+        System.out.println("Player " + enteredName + " give your answers: " + functionality.ANSI_RESET);
+        for (int i = 0; i < keys.length; i++) {
+            answer = functionality.askQuestion(keys[i]);
 
-                    // if word is in the whitelist, player has to insert new answer
-                    while (Database.compareToWhitelist(connection, keys[i], answer)) {
-                        functionality.setColorErrorText();
-                        System.out.println("This is a BAD, BAD word! Please insert something else"+functionality.ANSI_RESET);
-                        answer = functionality.askQuestion(keys[i]);
-                    }
-                    //if word is not in the whitelist, answer is saved in the map
-                    functionality.addAnswer(keys[i], answer);
-                }
-                player++;
-                indexForPlayerName++;
+            // if word is in the whitelist, player has to insert new answer
+            while (Database.compareToWhitelist(connection, keys[i], answer)) {
+                functionality.setColorErrorText();
+                System.out.println("This is a BAD, BAD word! Please insert something else" + functionality.ANSI_RESET);
+                answer = functionality.askQuestion(keys[i]);
+            }
+            //if word is not in the whitelist, answer is saved in the map
+            functionality.addAnswer(keys[i], answer);
+        }
+        player++;
+        indexForPlayerName++;
 // makes pause for 1 second
-                try {
+        try {
 
-                    System.out.print(functionality.BLACK_BACKGROUND_BRIGHT+functionality.ANSI_BLACK+"  >>>> loading >>  "+functionality.ANSI_RESET);
-                    for (int i = 0; i < 4; i++) {
+            System.out.print(functionality.BLACK_BACKGROUND_BRIGHT + functionality.ANSI_BLACK + "  >>>> loading >>  " + functionality.ANSI_RESET);
+            for (int i = 0; i < 4; i++) {
 
-                        TimeUnit.MICROSECONDS.sleep(999985);
-                        System.out.print(functionality.BLACK_BACKGROUND_BRIGHT+functionality.ANSI_BLACK+"  >>  "+functionality.ANSI_RESET);
-                    }
-                    System.out.println("\n");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            } while (player < givenPlayers + 1);
-
-            //For TESTS
-            //System.out.println("Map content BEFORE STORY: " + functionality.answers.toString());
-
-            //Resetting values to create stories for every player
-            player = 1;
-            indexForPlayerName = 0;
-
-
-            do {
-                //creating random story for each player
-                playerStory = functionality.creatingTheStory(keys);
-
-                // adding story to the Map of results
-                resultOfGameFinalStory.putIfAbsent(playerNames[indexForPlayerName], playerStory);
-                //FOR TESTS:
-                // System.out.println("Map content after STORY: " + functionality.answers.toString());
-                //System.out.println("Second-FINAL  MAP:  "+resultOfGameFinalStory.toString());
-
-                // saving story in the database
-                Database.insertIntoTable(connection, playerNames[indexForPlayerName], playerStory);
-                player++;
-                indexForPlayerName++;
-            } while (player < givenPlayers + 1);
-
-            //Resetting values to print the story for every player
-            player = 1;
-            indexForPlayerName = 0;
-
-
-            for (int i = 0; i < givenPlayers; i++) {
-                functionality.setColorMainText();
-                System.out.println("Story for Player " + player + ":  " + playerNames[indexForPlayerName]
-                        +"\t\t"+functionality.ANSI_RESET+"\n");
-                String[] story = resultOfGameFinalStory.get(playerNames[indexForPlayerName]);
-                functionality.printStory(story);
-                player++;
-                indexForPlayerName++;
+                TimeUnit.MICROSECONDS.sleep(999985);
+                System.out.print(functionality.BLACK_BACKGROUND_BRIGHT + functionality.ANSI_BLACK + "  >>  " + functionality.ANSI_RESET);
             }
+            System.out.println("\n");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+    } while (player < givenPlayers + 1);
+
+    //For TESTS
+    //System.out.println("Map content BEFORE STORY: " + functionality.answers.toString());
+
+    //Resetting values to create stories for every player
+    player = 1;
+    indexForPlayerName = 0;
+
+
+    do {
+        //creating random story for each player
+        playerStory = functionality.creatingTheStory(keys);
+
+        // adding story to the Map of results
+        resultOfGameFinalStory.putIfAbsent(playerNames[indexForPlayerName], playerStory);
+        //FOR TESTS:
+        // System.out.println("Map content after STORY: " + functionality.answers.toString());
+        //System.out.println("Second-FINAL  MAP:  "+resultOfGameFinalStory.toString());
+
+        // saving story in the database
+        Database.insertIntoTable(connection, playerNames[indexForPlayerName], playerStory);
+        player++;
+        indexForPlayerName++;
+    } while (player < givenPlayers + 1);
+
+    //Resetting values to print the story for every player
+    player = 1;
+    indexForPlayerName = 0;
+
+
+    for (int i = 0; i < givenPlayers; i++) {
+        functionality.setColorMainText();
+        System.out.println("Story for Player " + player + ":  " + playerNames[indexForPlayerName]
+                + "\t\t" + functionality.ANSI_RESET + "\n");
+        String[] story = resultOfGameFinalStory.get(playerNames[indexForPlayerName]);
+        functionality.printStory(story);
+        player++;
+        indexForPlayerName++;
+    }
+
+    System.out.println("Good job, the game is over. Would you like to play again? If so, please enter y, if not - press any other key.");
+    playAgain = scanner.next();
+
+
+} while (playAgain.equalsIgnoreCase("y"));
 //HAPPY END !
+            System.out.println("Thank you for playing our game, see you some other time!");
         }
     }
 }
