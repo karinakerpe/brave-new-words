@@ -68,7 +68,24 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             functionality.setColor();
             System.out.println("Enter Number of Players: " + functionality.ANSI_RESET);
-            int givenPlayers = scanner.nextInt();
+
+            boolean validInput = false;
+            int givenPlayers = 0;
+            while (!validInput) {
+                try {
+                    givenPlayers = scanner.nextInt();
+                    if (givenPlayers > 0 && givenPlayers <= 5){
+                        validInput = true;
+                    } else {
+                        System.out.println("Please enter a number of players ( from 1 to 5)");
+
+                    }
+
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter a number from 1 - 5! Please do not use letters.");
+                    scanner.next();
+                }
+            }
 
 
             /// stores players' names
