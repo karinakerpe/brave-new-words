@@ -6,30 +6,19 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-        //1. choosing how many players (3-4) -
 
-        // 2.questions - viena fukncija kas uzdod jautājumu
-        // 3. answers - collecting and saving answers to specific question (maps - key- questions, value <list>- answers)
-        //3.5. collecting answers and checking with whitelist, and then saving if they are okey
-
-        //4.generating "story" ->
-
-        // 5.show story, probably "for"(as separate method (if we have time)- formating that all words is small letters, spacing)
-
-        // 6.database for "story", unformated story in database
-
-        // 7. rerun programm - option tho choose if want to play again
-        String playAgain = "y";
 
         Functionality functionality = new Functionality();
-
-        //stores game questions in String array
+        //variables
         final String who = "Who? / What?";
         final String withWho = "With whom / with what?";
         final String didWhat = "Did what?";
         final String where = "Where?";
         final String when = "When?";
         final String why = "Why?";
+        String playAgain;
+
+        //stores game questions in String array
         String[] keys = new String[6];
         keys[0] = who;
         keys[1] = withWho;
@@ -38,17 +27,8 @@ public class Main {
         keys[4] = when;
         keys[5] = why;
 
-//        // stores which player's data we are working with
-//        int player = 1;
-//
-//        // stores player's answer to specific question
-//        String answer;
-//
-//        // stores player's final story
-//        String[] playerStory;
-//
-//        //stores all final stories of all players / key = playerName, value = playerStory
-//        Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
+
+        //
 
 
         //Connect to database for storing answers and accessing whitelist
@@ -72,13 +52,7 @@ public class Main {
                 //stores all final stories of all players / key = playerName, value = playerStory
                 Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
 
-                functionality.printingMainText("\t\t   Hello, welcome to  \t\t");
-                functionality.printingMainText("\t\t   Brave New Words!\u00A9  \t\t");
-                functionality.pause(444499);
-                functionality.printingMainText("We have only 3 rules here: ");
-                functionality.printingMainText("Rule number one - we don't talk about user choices!");
-                functionality.printingMainText("Rule number two - we don't judge your choices! (jk)");
-                functionality.printingMainText("Rule number three - no shirts, no shoes, no shame.");
+                functionality.helloAndRules();
 
 
                 //Asking how many players will play
@@ -88,21 +62,12 @@ public class Main {
                 functionality.printingMainText("\u2757 if you're here with a bigger gang, please look elsewhere. (╹◡╹)");
                 functionality.pause(999999);
                 functionality.printingMainText("\u27A4 How many players will play the game ?");
-                ArrayList<String> sarcasticReplies = new ArrayList<>();
-
-                sarcasticReplies.add("Please enter a number from 2 - 5! Do not use letters. It's really not that difficult.");
-                sarcasticReplies.add("Ha-ha how clever of you.... Not! Enter a number from 2 to 5 thank you very much.");
-                sarcasticReplies.add("Breaking news: not following instructions doesn't make you cool. Please enter a number from 2 to 5");
-                sarcasticReplies.add("It's going to be a long night, huh? Do you need a 5 year old to supervise you? Please enter a number from 2 to 5.");
-                sarcasticReplies.add("How did you finish elementary school if you cannot comprehend single digits? Let's try again - please enter a number from 2 to 5.");
-                sarcasticReplies.add("Watch out, we got a badass over here, failed to follow simple instructions -.-. Let's try again, enter a number from 2 to 5\"");
-                sarcasticReplies.add("Aren't you a special snowflake? Answers to be accepted: 2, 3, 4, 5! Try again.");
+                functionality.addToSarcasticReplies();
 
                 boolean validInput = false;
                 int givenPlayers = 0;
                 while (!validInput) {
                     try {
-
                         givenPlayers = scanner.nextInt();
                         if (givenPlayers > 1 && givenPlayers <= 5) {
                             validInput = true;
@@ -112,32 +77,16 @@ public class Main {
                             functionality.printingErrorText("When you have, enter a number from 2 to 5 to proceed.");
                             functionality.printingErrorText("P.S. Imaginary friends count as well. (╹◡╹)");
                         } else {
-//                            System.out.print("\u26D4 ");
-//                            functionality.printingErrorText("Please enter the number of players (from 2 to 5)");
-                            int random = (int) ((Math.random() * sarcasticReplies.size()));
-                            if (!sarcasticReplies.isEmpty()) {
-                                String text = sarcasticReplies.get(random);
-                                System.out.print("\u26D4 ");
-                                functionality.printingErrorText(text);
-                                sarcasticReplies.remove(random);
+                            if (!functionality.isSarcasticRepliesEmpty()) {
+                                functionality.printingErrorText(functionality.randomFromSarcasticReplies());
                             }
-
-
                         }
-
                     } catch (InputMismatchException e) {
-                        boolean gameOver = sarcasticReplies.isEmpty();
-                        if (gameOver == true) {
-                            System.out.print("\u26D4 ");
-                            functionality.printingErrorText("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
-                            System.exit(0);
+                        boolean gameOver = functionality.isSarcasticRepliesEmpty();
+                        if (gameOver) {
+                            functionality.gameOver();
                         }
-                        int random = (int) ((Math.random() * sarcasticReplies.size()));
-                        String text = sarcasticReplies.get(random);
-                        System.out.print("\u26D4 ");
-                        functionality.printingErrorText(text);
-                        sarcasticReplies.remove(random);
-
+                        functionality.printingErrorText(functionality.randomFromSarcasticReplies());
                         scanner.next();
                     }
                 }
@@ -182,8 +131,8 @@ public class Main {
                     //asking questions, storing answers in the Map (Functionality Class)
                     functionality.printingMainText("Okay, let's get started! " +
                             enteredName.toUpperCase() + " please answer to the following questions: ");
-                    for (int i = 0; i < keys.length; i++) {
-                        answer = functionality.askQuestion(keys[i]);
+                    for (String key : keys){
+                        answer = functionality.askQuestion(key);
 
                         // if word is in the whitelist, player has to insert new answer
                         while (Database.compareToWhitelist(connection, answer)) {
@@ -199,12 +148,11 @@ public class Main {
                                 System.exit(0);
                             }
 
-//                            System.out.print("\u26D4 ");
-//                            functionality.printingErrorText("Someone's naughty. This is a BAD, BAD word! I know we said we don't judge, but please let's keep it PG friendly.");
-                            answer = functionality.askQuestion(keys[i]);
+
+                            answer = functionality.askQuestion(key);
                         }
                         //if word is not in the whitelist, answer is saved in the map
-                        functionality.addAnswer(keys[i], answer);
+                        functionality.addAnswer(key, answer);
                     }
                     player++;
                     indexForPlayerName++;
@@ -278,7 +226,7 @@ public class Main {
             System.out.println();
             System.out.println(functionality.ANSI_PURPLE + "\t\tthe end\t\t" + functionality.resetColor());
             System.out.println(functionality.ANSI_PURPLE + "Dina, Elīna, Karīna, Laura" + functionality.resetColor());
-            ;
+
 
         }
     }
