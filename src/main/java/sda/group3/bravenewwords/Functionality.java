@@ -222,12 +222,17 @@ public class Functionality {
             int indexForColor = answersCopy.get(key).indexOf(answerOneWord);
             colorIndexForAnswerWords.add(indexForColor);
 
+
             storyPlayer[indexOfAnswer(key)] = answerOneWord;
+
             if (getAnswerList(key).contains(answerOneWord)) {
                 int indexForRemove = getAnswerList(key).indexOf(answerOneWord);
                 List<String> updatedList = getAnswerList(key);
+
+
                 updatedList.remove(indexForRemove);
-                answers.remove(key, updatedList);
+
+                answers.put(key, updatedList);
 
             }
         }
