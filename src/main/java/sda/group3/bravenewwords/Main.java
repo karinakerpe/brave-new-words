@@ -96,7 +96,7 @@ public class Main {
                 sarcasticReplies.add("It's going to be a long night, huh? Do you need a 5 year old to supervise you? Please enter a number from 2 to 5.");
                 sarcasticReplies.add("How did you finish elementary school if you cannot comprehend single digits? Let's try again - please enter a number from 2 to 5.");
                 sarcasticReplies.add("Watch out, we got a badass over here, failed to follow simple instructions -.-. Let's try again, enter a number from 2 to 5\"");
-                sarcasticReplies.add("Aren't you a special snowflake? Answers to be accepted: 2, 3, 4, 5 \ntry again.");
+                sarcasticReplies.add("Aren't you a special snowflake? Answers to be accepted: 2, 3, 4, 5! Try again.");
 
                 boolean validInput = false;
                 int givenPlayers = 0;
@@ -120,12 +120,14 @@ public class Main {
                     } catch (InputMismatchException e) {
                         boolean gameOver = sarcasticReplies.isEmpty();
                         if (gameOver == true) {
-                            System.out.println("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
+                            System.out.print("\u26D4 ");
+                            functionality.printingErrorText("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
                             System.exit(0);
                         }
                         int random = (int) ((Math.random() * sarcasticReplies.size()));
                         String text = sarcasticReplies.get(random);
-                        System.out.println(text);
+                        System.out.print("\u26D4 ");
+                        functionality.printingErrorText(text);
                         sarcasticReplies.remove(random);
 
                         scanner.next();
