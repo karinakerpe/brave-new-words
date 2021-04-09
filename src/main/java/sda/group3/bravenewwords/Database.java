@@ -1,9 +1,7 @@
 package sda.group3.bravenewwords;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.sql.*;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Database {
     public static Connection getConnection() throws SQLException {
@@ -12,10 +10,7 @@ public class Database {
 
     }
 
-    public static PreparedStatement createPreparedStatement() throws SQLException {
-        Connection connection = getConnection();
-        return connection.prepareStatement("");
-    }
+
 
 
 
@@ -67,12 +62,7 @@ public class Database {
         boolean wordIsInTheWhitelist;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery(sql);
-            if (resultSet.next()){
-                wordIsInTheWhitelist = true;
-            }
-            else{
-                wordIsInTheWhitelist = false;
-            }
+            wordIsInTheWhitelist = resultSet.next();
 //            } catch (Exception e) {
 //            e.printStackTrace();
         }
