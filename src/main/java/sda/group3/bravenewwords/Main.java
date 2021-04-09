@@ -88,7 +88,15 @@ public class Main {
                 functionality.printingMainText("\u2757 if you're here with a bigger gang, please look elsewhere. (╹◡╹)");
                 functionality.pause(999999);
                 functionality.printingMainText("\u27A4 How many players will play the game ?");
+                ArrayList<String> sarcasticReplies = new ArrayList<>();
 
+                sarcasticReplies.add("Please enter a number from 2 - 5! Do not use letters. It's really not that difficult.");
+                sarcasticReplies.add("Ha-ha how clever of you.... Not! Enter a number from 2 to 5 thank you very much.");
+                sarcasticReplies.add("Breaking news: not following instructions doesn't make you cool. Please enter a number from 2 to 5");
+                sarcasticReplies.add("It's going to be a long night, huh? Do you need a 5 year old to supervise you? Please enter a number from 2 to 5.");
+                sarcasticReplies.add("How did you finish elementary school if you cannot comprehend single digits? Let's try again - please enter a number from 2 to 5.");
+                sarcasticReplies.add("Watch out, we got a badass over here, failed to follow simple instructions -.-. Let's try again, enter a number from 2 to 5\"");
+                sarcasticReplies.add("Aren't you a special snowflake? Answers to be accepted: 2, 3, 4, 5 \ntry again.");
 
                 boolean validInput = false;
                 int givenPlayers = 0;
@@ -110,8 +118,16 @@ public class Main {
                         }
 
                     } catch (InputMismatchException e) {
-                        System.out.print("\u26D4 ");
-                        functionality.printingErrorText("Please enter a number from 2 - 5! Please do not use letters. It's really not that difficult.");
+                        boolean gameOver = sarcasticReplies.isEmpty();
+                        if (gameOver == true) {
+                            System.out.println("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
+                            System.exit(0);
+                        }
+                        int random = (int) ((Math.random() * sarcasticReplies.size()));
+                        String text = sarcasticReplies.get(random);
+                        System.out.println(text);
+                        sarcasticReplies.remove(random);
+
                         scanner.next();
                     }
                 }
