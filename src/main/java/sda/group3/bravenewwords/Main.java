@@ -102,6 +102,7 @@ public class Main {
                 int givenPlayers = 0;
                 while (!validInput) {
                     try {
+
                         givenPlayers = scanner.nextInt();
                         if (givenPlayers > 1 && givenPlayers <= 5) {
                             validInput = true;
@@ -111,8 +112,15 @@ public class Main {
                             functionality.printingErrorText("When you have, enter a number from 2 to 5 to proceed.");
                             functionality.printingErrorText("P.S. Imaginary friends count as well. (╹◡╹)");
                         } else {
-                            System.out.print("\u26D4 ");
-                            functionality.printingErrorText("Please enter the number of players (from 2 to 5)");
+//                            System.out.print("\u26D4 ");
+//                            functionality.printingErrorText("Please enter the number of players (from 2 to 5)");
+                            int random = (int) ((Math.random() * sarcasticReplies.size()));
+                            if (!sarcasticReplies.isEmpty()) {
+                                String text = sarcasticReplies.get(random);
+                                System.out.print("\u26D4 ");
+                                functionality.printingErrorText(text);
+                                sarcasticReplies.remove(random);
+                            }
 
 
                         }
@@ -139,7 +147,7 @@ public class Main {
                 String[] playerNames = new String[givenPlayers];
                 int indexForPlayerName = 0;
 
-//resetting color variables
+                //resetting color variables
                 functionality.emptyListAndEmptyCopyString();
 
                 //asking questions and saving answers
@@ -152,11 +160,21 @@ public class Main {
                     // BUT next() takes only first string not all what is entered
                     Scanner scanner1 = new Scanner(System.in);
                     String enteredName = scanner1.nextLine();
+                    int strike = 0;
                     while (Database.compareToWhitelist(connection, enteredName)) {
-                        System.out.print("\u26D4 ");
-                        functionality.printingErrorText("This is a BAD, BAD word and highly unlikely that's your actual name!");
+                        strike++;
+                        if (strike < 5) {
+                            System.out.print("\u26D4 ");
+                            functionality.printingErrorText("This is a BAD, BAD word and highly unlikely that's your actual name!");
+                            functionality.printingMainText("\u2757" + (5 - strike) + " more bad words and you are out!");
+                        } else if (strike == 5) {
+                            System.out.print("\u26D4 ");
+                            functionality.printingErrorText("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
+                            System.exit(0);
+                        }
                         functionality.printingMainText("\u27A4 Please enter a different name:");
                         enteredName = scanner1.nextLine();
+
                     }
 
                     playerNames[indexForPlayerName] = enteredName;
@@ -169,8 +187,20 @@ public class Main {
 
                         // if word is in the whitelist, player has to insert new answer
                         while (Database.compareToWhitelist(connection, answer)) {
-                            System.out.print("\u26D4 ");
-                            functionality.printingErrorText("Someone's naughty. This is a BAD, BAD word! I know we said we don't judge, but please let's keep it PG friendly.");
+
+                            strike++;
+                            if (strike < 5) {
+                                System.out.print("\u26D4 ");
+                                functionality.printingErrorText("Someone's naughty. This is a BAD, BAD word! I know we said we don't judge, but please let's keep it PG friendly.");
+                                functionality.printingMainText("\u2757" + (5 - strike) + " more bad words and you are out!");
+                            } else if (strike == 5) {
+                                System.out.print("\u26D4 ");
+                                functionality.printingErrorText("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
+                                System.exit(0);
+                            }
+
+//                            System.out.print("\u26D4 ");
+//                            functionality.printingErrorText("Someone's naughty. This is a BAD, BAD word! I know we said we don't judge, but please let's keep it PG friendly.");
                             answer = functionality.askQuestion(keys[i]);
                         }
                         //if word is not in the whitelist, answer is saved in the map
@@ -246,8 +276,8 @@ public class Main {
             functionality.printingMainText("Thank you for playing our game, see you some other time!");
             functionality.printingMainText("\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728(╹◡╹)\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728");
             System.out.println();
-            System.out.println(functionality.ANSI_PURPLE+"\t\tthe end\t\t"+functionality.resetColor());
-            System.out.println(functionality.ANSI_PURPLE+"Dina, Elīna, Karīna, Laura" +functionality.resetColor());
+            System.out.println(functionality.ANSI_PURPLE + "\t\tthe end\t\t" + functionality.resetColor());
+            System.out.println(functionality.ANSI_PURPLE + "Dina, Elīna, Karīna, Laura" + functionality.resetColor());
             ;
 
         }
