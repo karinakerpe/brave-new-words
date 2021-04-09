@@ -3,7 +3,6 @@ package sda.group3.bravenewwords;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -56,14 +55,12 @@ public class Main {
         Connection connection = Database.getConnection();
 
         if (connection == null) {
-            functionality.setColorErrorText();
-            System.out.println("Sorry, we were not able to connect to the database." + functionality.ANSI_RESET);
+            System.out.print("\u26D4 ");
+            functionality.printingErrorText("Sorry, we were not able to connect to the database.");
         } else {
             Database.createTable(connection);
             do {
-                // Welcome text
-                functionality.setColorMainText();
-                // stores which player's data we are working with
+
                 int player = 1;
 
                 // stores player's answer to specific question
@@ -75,12 +72,23 @@ public class Main {
                 //stores all final stories of all players / key = playerName, value = playerStory
                 Map<String, String[]> resultOfGameFinalStory = new HashMap<>();
 
-                System.out.println("Hello, welcome to Brave New Words! We have only 3 rules here: \nRule number one - we don't talk about user choices!\n Rule number two - we don't judge your choices! (jk)\n Rule number three - no shirts, no shoes, no shame. " + functionality.ANSI_RESET);
+                functionality.printingMainText("\t\t   Hello, welcome to  \t\t");
+                functionality.printingMainText("\t\t   Brave New Words!\u00A9  \t\t");
+                functionality.pause(444499);
+                functionality.printingMainText("We have only 3 rules here: ");
+                functionality.printingMainText("Rule number one - we don't talk about user choices!");
+                functionality.printingMainText("Rule number two - we don't judge your choices! (jk)");
+                functionality.printingMainText("Rule number three - no shirts, no shoes, no shame.");
+
 
                 //Asking how many players will play
                 Scanner scanner = new Scanner(System.in);
-                functionality.setColor();
-                System.out.println("How many players will play the game?\n P.S. 2 - 5 players allowed, if you're here with a bigger gang, please look elsewhere ;) " + functionality.ANSI_RESET);
+                System.out.println();
+                functionality.printingMainText("2 - 5 players allowed, ");
+                functionality.printingMainText("\u2757 if you're here with a bigger gang, please look elsewhere. (╹◡╹)");
+                functionality.pause(999999);
+                functionality.printingMainText("\u27A4 How many players will play the game ?");
+
 
                 boolean validInput = false;
                 int givenPlayers = 0;
@@ -89,15 +97,21 @@ public class Main {
                         givenPlayers = scanner.nextInt();
                         if (givenPlayers > 1 && givenPlayers <= 5) {
                             validInput = true;
-                        } else if (givenPlayers == 1){
-                            System.out.println("Oh, you loner, please get some friends! \nWhen you have, enter a number from 2 to 5 to proceed.\nP.S. Imaginary friends count as well. :)");
+                        } else if (givenPlayers == 1) {
+                            System.out.print("\u26D4 ");
+                            functionality.printingErrorText("\tOh, you loner, please get some friends!");
+                            functionality.printingErrorText("When you have, enter a number from 2 to 5 to proceed.");
+                            functionality.printingErrorText("P.S. Imaginary friends count as well. (╹◡╹)");
                         } else {
-                            System.out.println("Please enter the number of players ( from 2 to 5)");
+                            System.out.print("\u26D4 ");
+                            functionality.printingErrorText("Please enter the number of players (from 2 to 5)");
+
 
                         }
 
                     } catch (InputMismatchException e) {
-                        System.out.println("Please enter a number from 2 - 5! Please do not use letters. It's really not that difficult.");
+                        System.out.print("\u26D4 ");
+                        functionality.printingErrorText("Please enter a number from 2 - 5! Please do not use letters. It's really not that difficult.");
                         scanner.next();
                     }
                 }
@@ -107,35 +121,38 @@ public class Main {
                 String[] playerNames = new String[givenPlayers];
                 int indexForPlayerName = 0;
 
+//resetting color variables
+                functionality.emptyListAndEmptyCopyString();
 
                 //asking questions and saving answers
 
                 do {
                     //asking player's name and adding it to the String Array
-                    System.out.println(functionality.WHITE_BACKGROUND_BRIGHT + functionality.BLACK_BOLD_BRIGHT + "Please enter your name: " + functionality.ANSI_RESET);
+                    functionality.printingMainText("\u27A4 Please enter your name: ");
 
                     //new Scanner to fix problem = after nextINT() the nextLine() is not working,
                     // BUT next() takes only first string not all what is entered
                     Scanner scanner1 = new Scanner(System.in);
                     String enteredName = scanner1.nextLine();
                     while (Database.compareToWhitelist(connection, enteredName)) {
-                        functionality.setColorErrorText();
-                        System.out.println("This is a BAD, BAD word and highly unlikely that's your actual name! Please enter a different name." + functionality.ANSI_RESET);
+                        System.out.print("\u26D4 ");
+                        functionality.printingErrorText("This is a BAD, BAD word and highly unlikely that's your actual name!");
+                        functionality.printingMainText("\u27A4 Please enter a different name:");
                         enteredName = scanner1.nextLine();
                     }
 
                     playerNames[indexForPlayerName] = enteredName;
 
                     //asking questions, storing answers in the Map (Functionality Class)
-                    functionality.setColorMainText();
-                    System.out.println("Okay, let's get started! " + enteredName + " please answer to the following questions: " + functionality.ANSI_RESET);
+                    functionality.printingMainText("Okay, let's get started! " +
+                            enteredName.toUpperCase() + " please answer to the following questions: ");
                     for (int i = 0; i < keys.length; i++) {
                         answer = functionality.askQuestion(keys[i]);
 
                         // if word is in the whitelist, player has to insert new answer
                         while (Database.compareToWhitelist(connection, answer)) {
-                            functionality.setColorErrorText();
-                            System.out.println("Someone's naughty. This is a BAD, BAD word! I know we said we don't judge, but please let's keep it PG friendly." + functionality.ANSI_RESET);
+                            System.out.print("\u26D4 ");
+                            functionality.printingErrorText("Someone's naughty. This is a BAD, BAD word! I know we said we don't judge, but please let's keep it PG friendly.");
                             answer = functionality.askQuestion(keys[i]);
                         }
                         //if word is not in the whitelist, answer is saved in the map
@@ -143,24 +160,12 @@ public class Main {
                     }
                     player++;
                     indexForPlayerName++;
-// makes pause for 1 second
-                    try {
 
-                        System.out.print(functionality.BLACK_BACKGROUND_BRIGHT + functionality.ANSI_BLACK + "  >>>> loading >>  " + functionality.ANSI_RESET);
-                        for (int i = 0; i < 4; i++) {
-
-                            TimeUnit.MICROSECONDS.sleep(999985);
-                            System.out.print(functionality.BLACK_BACKGROUND_BRIGHT + functionality.ANSI_BLACK + "  >>  " + functionality.ANSI_RESET);
-                        }
-                        System.out.println("\n");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if (player < givenPlayers + 1) {
+                        functionality.pause(">>>> loading questions for next player >>  ");
                     }
-
                 } while (player < givenPlayers + 1);
 
-                //For TESTS
-                //System.out.println("Map content BEFORE STORY: " + functionality.answers.toString());
 
                 //Resetting values to create stories for every player
                 player = 1;
@@ -173,38 +178,60 @@ public class Main {
 
                     // adding story to the Map of results
                     resultOfGameFinalStory.putIfAbsent(playerNames[indexForPlayerName], playerStory);
-                    //FOR TESTS:
-                    // System.out.println("Map content after STORY: " + functionality.answers.toString());
-                    //System.out.println("Second-FINAL  MAP:  "+resultOfGameFinalStory.toString());
 
                     // saving story in the database
                     Database.insertIntoTable(connection, playerNames[indexForPlayerName], playerStory);
                     player++;
                     indexForPlayerName++;
+
+
                 } while (player < givenPlayers + 1);
 
                 //Resetting values to print the story for every player
                 player = 1;
                 indexForPlayerName = 0;
 
+                functionality.pause(">>>> magic in progress >>");
 
+                functionality.printingMainText("\t\t\tStory time!!!\t\t\t");
+                functionality.pause();
+                functionality.printingMainText("The colors are not accidental! One color for each!");
+                functionality.pause();
+                functionality.printingMainText("...so once upon a time...");
+                functionality.pause();
+                System.out.println();
                 for (int i = 0; i < givenPlayers; i++) {
-                    functionality.setColorMainText();
-                    System.out.println("Story time!!! Story for " + playerNames[indexForPlayerName] + " is"
-                            + "\t\t" + functionality.ANSI_RESET + "\n");
+                    functionality.setColor(player);
+                    System.out.println(playerNames[indexForPlayerName].toUpperCase() + " said that : " + functionality.resetColor());
+                    System.out.println();
                     String[] story = resultOfGameFinalStory.get(playerNames[indexForPlayerName]);
                     functionality.printStory(story);
+
                     player++;
                     indexForPlayerName++;
+                    functionality.pause();
                 }
 
-                System.out.println("Good job, the game is over. Would you like to play again? If so, please enter y, if not - press any other key.");
+
+                functionality.printingMainText("Good job, the game is over. Would you like to play again?");
+                System.out.println();
+                functionality.printingMainText("\u27A4 press \u24E8 to play again / press 'any key' to exit.");
+                functionality.printingMainText("");
                 playAgain = scanner.next();
 
+                if (playAgain.equalsIgnoreCase("y")) {
+                    functionality.pause(">>>> loading new game >>  ");
+                }
 
             } while (playAgain.equalsIgnoreCase("y"));
 //HAPPY END !
-            System.out.println("Thank you for playing our game, see you some other time!");
+            functionality.printingMainText("Thank you for playing our game, see you some other time!");
+            functionality.printingMainText("\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728(╹◡╹)\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728");
+            System.out.println();
+            System.out.println(functionality.ANSI_PURPLE+"\t\tthe end\t\t"+functionality.resetColor());
+            System.out.println(functionality.ANSI_PURPLE+"Dina, Elīna, Karīna, Laura" +functionality.resetColor());
+            ;
+
         }
     }
 }

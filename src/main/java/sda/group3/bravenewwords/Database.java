@@ -45,7 +45,7 @@ public class Database {
     }}
 
 
-    public static void printAllDatabaseRecord(Connection connection) throws SQLException {
+    public static void printDatabaseRecord(Connection connection) throws SQLException {
         String sql = "SELECT * from student";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
