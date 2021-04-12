@@ -27,6 +27,8 @@ public class Main {
         keys[4] = when;
         keys[5] = why;
 
+        Scanner scanner = new Scanner(System.in);
+
 
         //
 
@@ -56,7 +58,6 @@ public class Main {
 
 
                 //Asking how many players will play
-                Scanner scanner = new Scanner(System.in);
                 System.out.println();
                 functionality.printingMainText("2 - 5 players allowed, ");
                 functionality.printingMainText("\u2757 if you're here with a bigger gang, please look elsewhere. (╹◡╹)");
@@ -131,7 +132,7 @@ public class Main {
                     //asking questions, storing answers in the Map (Functionality Class)
                     functionality.printingMainText("Okay, let's get started! " +
                             enteredName.toUpperCase() + " please answer to the following questions: ");
-                    for (String key : keys){
+                    for (String key : keys) {
                         answer = functionality.askQuestion(key);
 
                         // if word is in the whitelist, player has to insert new answer
@@ -191,7 +192,7 @@ public class Main {
 
                 functionality.printingMainText("\t\t\tStory time!!!\t\t\t");
                 functionality.pause();
-                functionality.printingMainText("The colors are not accidental! One color for each!");
+                functionality.printingMainText("The colors are not accidental! One color for each player!");
                 functionality.pause();
                 functionality.printingMainText("...so once upon a time...");
                 functionality.pause();
@@ -220,14 +221,19 @@ public class Main {
                 }
 
             } while (playAgain.equalsIgnoreCase("y"));
-//HAPPY END !
-            functionality.printingMainText("Thank you for playing our game, see you some other time!");
-            functionality.printingMainText("\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728(╹◡╹)\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728");
-            System.out.println();
-            System.out.println(functionality.ANSI_PURPLE + "\t\tthe end\t\t" + functionality.resetColor());
-            System.out.println(functionality.ANSI_PURPLE + "Dina, Elīna, Karīna, Laura" + functionality.resetColor());
-
-
         }
+        System.out.println();
+        functionality.printingMainText("Whait! Due to your amazing answers you have received a special bonus!");
+        functionality.printingMainText("Type one word and see all the stories that includes this word!");
+        String searchWord = scanner.next();
+        Database.printDatabaseRecord(connection, searchWord);
+
+        System.out.println();
+        functionality.printingMainText("Thank you for playing our game, see you some other time!");
+        functionality.printingMainText("\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728(╹◡╹)\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728");
+        System.out.println();
+        System.out.println(functionality.ANSI_PURPLE + "\t\tthe end\t\t" + functionality.resetColor());
+        System.out.println(functionality.ANSI_PURPLE + "Dina, Elīna, Karīna, Laura" + functionality.resetColor());
+
     }
 }
