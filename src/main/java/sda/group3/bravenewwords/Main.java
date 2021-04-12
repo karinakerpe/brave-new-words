@@ -88,7 +88,6 @@ public class Main {
                 player = 1;
                 indexForPlayerName = 0;
 
-                System.out.println(functionality.colorIndexForAnswerWords.toString());
                 do {
                     //creating random story for each player
                     playerStory = functionality.creatingTheStory(keys);
@@ -115,7 +114,6 @@ public class Main {
                 functionality.printingMainText("...so once upon a time...");
                 functionality.pause();
                 System.out.println();
-                System.out.println(functionality.colorIndexForAnswerWords.toString());
 
                 for (int i = 0; i < givenPlayers; i++) {
                     functionality.setColor(player);
