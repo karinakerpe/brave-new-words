@@ -1,10 +1,11 @@
 package sda.group3.bravenewwords;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Functionality {
-
     // creating a map where save answers to specific questions
     Map<String, List<String>> answers = new HashMap<>();
     //for colors
@@ -16,51 +17,34 @@ public class Functionality {
      */
 
     //RESET - BRINGS BACK TO NORMAL
-    final String ANSI_RESET = "\u001B[0m";
+    private final String ANSI_RESET = "\u001B[0m";
 
-
-    public static final String GREEN_BOLD_BRIGHT = "\033[1;92m"; // GREEN
-    final String YELLOW_BOLD_BRIGHT = "\033[1;93m";// YELLOW
-    public static final String BLUE_BOLD_BRIGHT = "\033[1;94m";  // BLUE
-    public static final String PURPLE_BOLD_BRIGHT = "\033[1;95m";// PURPLE
-    public static final String CYAN_BOLD_BRIGHT = "\033[1;96m";  // CYAN
-
-    // High Intensity backgrounds
-    final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";// BLACK
-    final String RED_BACKGROUND_BRIGHT = "\033[0;101m";// RED
-    final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
-
-
-    final String ANSI_BLACK = "\u001B[30m";
-    final String ANSI_BLUE = "\u001B[34m";
-    final String ANSI_PURPLE = "\u001B[35m";
+    private final String GREEN_BOLD_BRIGHT = "\033[1;92m"; // GREEN
+    private final String YELLOW_BOLD_BRIGHT = "\033[1;93m";// YELLOW
+    private final String BLUE_BOLD_BRIGHT = "\033[1;94m";  // BLUE
+    private final String PURPLE_BOLD_BRIGHT = "\033[1;95m";// PURPLE
+    private final String CYAN_BOLD_BRIGHT = "\033[1;96m";  // CYAN
+    private final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";
+    private final String ANSI_BLACK = "\u001B[30m";
+    private final String ANSI_BLUE = "\u001B[34m";
 
 
     //Method for colors - random; USAGE:
     // only with SOUT and after text must use RESET; color+text+reset
     public String resetColor() {
-
         return ANSI_RESET;
     }
 
-    public String setColorMainText() {
-
-        return WHITE_BACKGROUND_BRIGHT + ANSI_BLACK;
-    }
-
     public void printingMainText(String text) {
-
-        System.out.println(setColorMainText() + text + resetColor());
+        String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";
+        System.out.println(WHITE_BACKGROUND_BRIGHT + ANSI_BLACK + text + resetColor());
     }
 
-    public String setColorErrorText() {
-
-        return RED_BACKGROUND_BRIGHT + ANSI_BLACK;
-    }
 
     public void printingErrorText(String text) {
-
-        System.out.println(setColorErrorText() + text + resetColor());
+        String RED_BACKGROUND_BRIGHT = "\033[0;101m";
+        System.out.println(RED_BACKGROUND_BRIGHT + ANSI_BLACK + "\u26D4 " +
+                text + resetColor());
     }
 
 
@@ -77,7 +61,6 @@ public class Functionality {
     }
 
     public void setColor(int index) {
-
         if (index == 1) {
             System.out.print(BLACK_BACKGROUND_BRIGHT + BLUE_BOLD_BRIGHT);
         } else if (index == 2) {
@@ -125,6 +108,11 @@ public class Functionality {
         printingMainText("Rule number two - we don't judge your choices! (jk)");
         printingMainText("Rule number three - no shirts, no shoes, no shame.");
 
+        printingMainText("2 - 5 players allowed, ");
+        printingMainText("\u2757 if you're here with a bigger gang, please look elsewhere. (╹◡╹)");
+        pause(999999);
+        printingMainText("\u27A4 How many players will play the game ?");
+
     }
 
     ArrayList<String> sarcasticReplies = new ArrayList<>();
@@ -156,10 +144,45 @@ public class Functionality {
     }
 
     public void gameOver() {
-        System.out.print("\u26D4 ");
         printingErrorText("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
         System.exit(0);
     }
+
+public int getGivenPlayers (){
+    Scanner scanner = new Scanner(System.in);
+    boolean validInput = false;
+    int givenPlayers = 0;
+                while (!validInput) {
+        try {
+            givenPlayers = scanner.nextInt();
+            if (givenPlayers > 1 && givenPlayers <= 5) {
+                validInput = true;
+            } else if (givenPlayers == 1) {
+                printingErrorText("\tOh, you loner, please get some friends!");
+                printingErrorText("When you have, enter a number from 2 to 5 to proceed.");
+                printingErrorText("P.S. Imaginary friends count as well. (╹◡╹)");
+            } else {
+                if (!isSarcasticRepliesEmpty()) {
+                    printingErrorText(randomFromSarcasticReplies());
+                }
+            }
+        } catch (InputMismatchException e) {
+            boolean gameOver = isSarcasticRepliesEmpty();
+            if (gameOver) {
+                gameOver();
+            }
+            printingErrorText(randomFromSarcasticReplies());
+            scanner.next();
+        }
+    }
+                return givenPlayers;
+    }
+
+
+
+
+
+
 
 
     //asking a question and saving the answer
@@ -264,6 +287,49 @@ public class Functionality {
         System.out.println("\n");
     }
 
+    int strike;
+    public void resetStrike(){
+        this.strike=0;
+}
+    public String gettingNameNotInWhiteList(Connection connection) throws SQLException {
+
+        Scanner scanner1 = new Scanner(System.in);
+        String enteredName = scanner1.nextLine();
+        while (Database.compareToWhitelist(connection, enteredName)) {
+            strike++;
+            if (strike < 3) {
+                printingErrorText("This is a BAD, BAD word and highly unlikely that's your actual name!");
+                printingMainText("\u2757" + (3 - strike) + " more bad words and you are out!");
+            } else if (strike == 3) {
+                printingErrorText("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
+                System.exit(0);
+            }
+            printingMainText("\u27A4 Please enter a different name:");
+            enteredName = scanner1.nextLine();
+        }
+
+        return enteredName;
+    }
+
+
+    public String gettingAnswerNotInWhiteList(Connection connection, String enteredName, String key) throws SQLException {
+
+        while (Database.compareToWhitelist(connection, enteredName)) {
+            strike++;
+            if (strike < 3) {
+                printingErrorText("Someone's naughty. This is a BAD, BAD word! I know we said we don't judge, but please let's keep it PG friendly.");
+                printingMainText("\u2757" + (3 - strike) + " more bad words and you are out!");
+            } else if (strike == 3) {
+                printingErrorText("The game is done entertaining your infantile behavior. Come back when you have graduated from kindergarden.");
+                System.exit(0);
+            }
+
+            enteredName = askQuestion(key);
+
+        }
+        return enteredName;
+    }
+
     // makes pause with message needed
     public void pause(String pauseMessage) {
         try {
@@ -311,6 +377,17 @@ public class Functionality {
             e.printStackTrace();
         }
     }
+
+    public void endText() {
+        pause(333333);
+        printingMainText("Thank you for playing our game, see you some other time!");
+        printingMainText("\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728(╹◡╹)\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728\u2728");
+        System.out.println();
+        String ANSI_PURPLE = "\u001B[35m";
+        System.out.println(ANSI_PURPLE + "\t\tthe end\t\t" + resetColor());
+        System.out.println(ANSI_PURPLE + "Dina, Elīna, Karīna, Laura" + resetColor());
+    }
+
 
 // // //
 }

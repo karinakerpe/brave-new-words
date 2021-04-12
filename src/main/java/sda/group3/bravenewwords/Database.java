@@ -39,15 +39,18 @@ public class Database {
         int count = 0;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
+            Functionality functionality = new Functionality();
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String story = resultSet.getString("story").replaceAll("[\\[,\\]]", "");
-                System.out.println(id + " | " + story);
+                functionality.setColor();
+                System.out.println(id + " | " + story+functionality.resetColor());
                 count++;
             }
             if (count == 0){
-                System.out.println("Auch! Bad choice! No stories include word " + searchWord);
+                functionality.setColor();
+                System.out.println("Auch! Bad choice! No stories include word " + searchWord+functionality.resetColor());
             }
         }
     }
